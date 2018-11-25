@@ -1,7 +1,5 @@
 
-/** Starter code for permutations and combinations of distinct items
- *  @author
- **/
+/** Starter code for permutations and combinations of distinct items **/
 
 package sxb180066;
 
@@ -39,6 +37,20 @@ public class Enumerate<T> {
     // n = arr.length, choose k things, d elements arr[0..d-1] done
     // c more elements are needed from arr[d..n-1].  d = k-c.
     public void permute(int c) {  // To do for LP4
+        if(c == 0) {
+            visit(arr);
+        } else {
+            int d = k - c;
+            permute(c-1);
+            for(int i = d+1;i<=arr.length-1;i++) {
+                T temp = arr[d];
+                arr[d] = arr[i];
+                arr[i] = temp;
+                permute(c-1);
+                arr[i] = arr[d];
+                arr[d] = temp;
+            }
+        }
     }
 
     // choose c items from A[0..i-1].  In SP11-opt
