@@ -1,8 +1,10 @@
-/* Driver code for PERT algorithm (LP4)
- * @author
+/**
+ * Driver code for PERT algorithm (LP4)
+ * @author Shiva Prasad Reddy Bitla (sxb180066)
+ * @author Sudeep Maity (sdm170530)
+ * @author Saurav Sharma (sxs179830)
  */
 
-// change package to your netid
 package sxb180066;
 
 import rbk.Graph;
@@ -12,44 +14,87 @@ import rbk.Graph.GraphAlgorithm;
 import rbk.Graph.Factory;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Scanner;
 
 public class PERT extends GraphAlgorithm<PERT.PERTVertex> {
-	int maxTime;
-	int numOfCriticalNodes;
-	Vertex s; // dummy start node
-	Vertex t; //dummy end node
+
+    private int maxTime;
+	private int numOfCriticalNodes;
+	private Vertex s; // dummy start node
+	private Vertex t; //dummy end node
 
 	/**
 	 * PertVertex class
 	 */
 	public static class PERTVertex implements Factory {
-		int duration;
-		int ec;
-		int lc;
-		int slack;
-		boolean isCritical;
+
+	    private int duration;
+		private int ec;
+		private int lc;
+		private int slack;
+		private boolean isCritical;
 
 		public PERTVertex(Vertex u) {
 			this.ec = 0;
 			this.isCritical = false;
 			this.slack = 0;
 		}
+
 		public PERTVertex make(Vertex u) { return new PERTVertex(u); }
+
+		public int getDuration() {
+		    return this.duration;
+        }
+
+        public void setDuration(int duration) {
+		    this.duration = duration;
+        }
+
+        public int getEc() {
+		    return this.ec;
+        }
+
+        public void setEc(int ec) {
+		    this.ec = ec;
+        }
+
+        public int getLc() {
+		    return this.lc;
+        }
+
+        public void setLc(int lc) {
+		    this.lc = lc;
+        }
+
+        public int getSlack() {
+		    return this.slack;
+        }
+
+        public void setSlack(int slack) {
+		    this.slack = slack;
+        }
+
+        public boolean getCritical() {
+		    return this.isCritical;
+        }
+
+        public void setCritical(boolean isCritical) {
+		    this.isCritical = isCritical;
+        }
 	}
 
 	/**
 	 * PERT Constructor
-	 * @param g
+     * Initializing all member variables
+	 * @param g: Graph Object
 	 */
 	public PERT(Graph g) {
-		super(g, new PERTVertex(null));
+
+	    super(g, new PERTVertex(null));
 		this.maxTime = 0;
 		this.numOfCriticalNodes = 0;
-		//initializing start and end nodes
 		this.s = g.getVertex(1);
 		this.t = g.getVertex(g.size());
 	}
@@ -60,7 +105,7 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex> {
 	 * @param d
 	 */
 	public void setDuration(Vertex u, int d) {
-		get(u).duration = d;
+	    get(u).setDuration(d);
 	}
 
 	/**
@@ -68,97 +113,138 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex> {
 	 * @return
 	 */
 	public boolean pert() {
-		//running dfs on the graph
+
+		// Running DFS on the graph, to get Topological Order
 		DFS d = new DFS(g);
 		List<Vertex> topologicalOrder = d.topologicalOrder1();
 
-		//if topologicalOrder is null then the graph is not DAG
+		// If topologicalOrder is null then the graph is not DAG
 		if(topologicalOrder == null){
 			return false;
 		}
 
-		//Calculation of EC for all nodes
+		// Calculation of EC for all nodes
 		for( Vertex u : topologicalOrder){
 			for(Edge e : g.incident(u)){
 				Vertex v = e.otherEnd(u);
-				if(get(u).ec + get(v).duration > get(v).ec){
-					get(v).ec = get(u).ec + get(v).duration;
+				if(get(u).getEc() + get(v).getDuration() > get(v).getEc()){
+					get(v).setEc(get(u).getEc() + get(v).getDuration());
 				}
 			}
 		}
 
-		//MaxTime is the EC of end node
-		maxTime = get(t).ec;
+		// MaxTime is the EC of end node
+		this.maxTime = get(t).getEc();
 
-		//setting lc of all the nodes to maxTime
+		// Setting lc of all the nodes to maxTime
 		for(Vertex u : g){
-			get(u).lc = maxTime;
+			get(u).setLc(maxTime);
 		}
 
-		//Calculation of LC
+		// Calculation lc
 		ListIterator<Vertex> reverseTopological = topologicalOrder.listIterator(topologicalOrder.size()); //using reverse iterator
 		while(reverseTopological.hasPrevious()){
 			Vertex u = reverseTopological.previous();
 			for( Edge e : g.incident(u)){
 				Vertex v = e.otherEnd(u);
-				if(get(v).lc - get(v).duration < get(u).lc){
-					get(u).lc = get(v).lc - get(v).duration;
+				if(get(v).getLc() - get(v).getDuration() < get(u).getLc()){
+					get(u).setLc(get(v).getLc() - get(v).getDuration());
 				}
 			}
-			//Calculation of slack
-			get(u).slack = get(u).lc - get(u).ec;
-			if(get(u).slack == 0){
-				//if slack is 0 then the node is critical
-				get(u).isCritical = true;
-				numOfCriticalNodes++;
+
+			// Calculation of slack
+			get(u).setSlack(get(u).getLc() - get(u).getEc());
+
+			if(get(u).getSlack() == 0){
+				// if slack is 0 then the node is critical
+				get(u).setCritical(true);
+				this.numOfCriticalNodes++;
 			}
 		}
 		return true;
 	}
+
+    /**
+     * Earliest Time u can be completed
+     * @param u Vertex
+     * @return Earliest Time u can be completed
+     */
 	public int ec(Vertex u) {
-		return get(u).ec;
+		return get(u).getEc();
 	}
 
+    /**
+     * Latest Time u can be completed
+     * @param u Vertex
+     * @return Earliest Time u can be completed
+     */
 	public int lc(Vertex u) {
-		return get(u).lc;
+		return get(u).getLc();
 	}
 
+    /**
+     * Slack for Vertex u
+     * @param u Vertex
+     * @return Slack
+     */
 	public int slack(Vertex u) {
-		return get(u).slack;
+		return get(u).getSlack();
 	}
 
+    /**
+     *
+     * @return Critical Path for the Graph
+     */
 	public int criticalPath() {
-		return maxTime;
+		return this.maxTime;
 	}
 
+    /**
+     * Checks whether a Vertex is critical or not i.e. Earliest Time = Latest Time
+     * @param u Vertex
+     * @return if Vertex is critical or not
+     */
 	public boolean critical(Vertex u) {
-		return get(u).isCritical;
+		return get(u).getCritical();
 	}
 
+    /**
+     *
+     * @return number of critical vertex
+     */
 	public int numCritical() {
-		return numOfCriticalNodes;
+		return this.numOfCriticalNodes;
 	}
 
-	// setDuration(u, duration[u.getIndex()]);
+    /**
+     * Run Pert algorithm on a given Graph
+     * @param g Graph
+     * @param duration
+     * @return PERT class object storing all information
+     */
 	public static PERT pert(Graph g, int[] duration) {
 		PERT pert = new PERT(g);
 
-		//Initializing duration of all nodes and setting up dummy start and end nodes
+		// Initializing duration of all nodes and setting up dummy start and end nodes
 		for(Vertex u: g) {
-			pert.setDuration(u, duration[u.getIndex()]);
-			//creating edge from start node to all other nodes
+
+		    pert.setDuration(u, duration[u.getIndex()]);
+
+		    // Creating edge from start node to all other nodes
 			if(u.getName() != 1){
 				g.addEdge(pert.s.getIndex(),u.getIndex(),0);
 			}
-			//creating edge from all the nodes to end node
+
+			// Creating edge from all the nodes to end node
 			if(u.getName() != g.size()){
 				g.addEdge(u.getIndex(),pert.t.getIndex(),0);
 			}
 
 		}
+
 		if(pert.pert()){
 			return pert;
-		}else{
+		} else{
 			return null;
 		}
 	}

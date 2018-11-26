@@ -1,5 +1,9 @@
-
-/** Starter code for permutations and combinations of distinct items **/
+/**
+ * Starter code for permutations and combinations of distinct items
+ * @author Shiva Prasad Reddy Bitla (sxb180066)
+ * @author Sudeep Maity (sdm170530)
+ * @author Saurav Sharma (sxs179830)
+ */
 
 package sxb180066;
 
