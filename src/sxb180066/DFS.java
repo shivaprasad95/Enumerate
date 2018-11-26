@@ -94,7 +94,7 @@ public class DFS extends GraphAlgorithm<DFS.DFSVertex> {
     }
 
     // Member function to find topological order
-    private List<Vertex> topologicalOrder1() {
+    public List<Vertex> topologicalOrder1() {
         if (!g.isDirected()) {
             return null;
         }
