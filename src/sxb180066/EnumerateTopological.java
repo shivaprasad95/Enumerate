@@ -12,22 +12,11 @@ import rbk.Graph.Vertex;
 import rbk.Graph.Edge;
 import rbk.Graph.Factory;
 
-import rbk.Graph;
-import sxb180066.Enumerate;
-import rbk.Graph.GraphAlgorithm;
-import rbk.Graph.Timer;
-import rbk.Graph.Vertex;
-import rbk.Graph.Edge;
-import rbk.Graph.Factory;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-import java.io.File;
-import java.io.FileNotFoundException;
 
 public class EnumerateTopological extends GraphAlgorithm<EnumerateTopological.EnumVertex> {
-	boolean print; // Set to true to print array in visit
+	private boolean print; // Set to true to print array in visit
 	long count; // Number of permutations or combinations visited
 	Selector sel;
 	private static List<Graph.Vertex> finishList;
@@ -41,7 +30,6 @@ public class EnumerateTopological extends GraphAlgorithm<EnumerateTopological.En
 
 	static class EnumVertex implements Factory {
 		int indegree;
-
 		EnumVertex() {	}
 
 		public EnumVertex make(Vertex u) {
@@ -89,20 +77,22 @@ public class EnumerateTopological extends GraphAlgorithm<EnumerateTopological.En
 
 	/**
 	 * Enumerate topological method which returns the count of enumeration
-	 * @param flag
-	 * @return
+	 * @param flag flag to print the array in visit or not
+	 * @return number of combination or permutations visited
 	 */
 	public long enumerateTopological(boolean flag) {
-		//EnumerateTopological
-		print = flag;
+
+		// EnumerateTopological
+		this.print = flag;
 		Vertex[] arr = g.getVertexArray();
-		Enumerate e = new Enumerate (arr, sel);
-		//initilization
+		Enumerate e = new Enumerate<>(arr, this.sel);
+
+		// Initialization
 		for (Vertex u : g ) {
 			get(u).indegree = u.inDegree();
 		}
 		e.permute(arr.length);
-		return count;
+		return this.count;
 	}
 
 	// -------------------static methods----------------------
@@ -118,9 +108,10 @@ public class EnumerateTopological extends GraphAlgorithm<EnumerateTopological.En
 	}
 
 	public static void main(String[] args) {
+
 		int VERBOSE = 0;
 		if(args.length > 0) { VERBOSE = Integer.parseInt(args[0]); }
-		Graph g = Graph.readDirectedGraph(new java.util.Scanner(System.in));
+		Graph g = Graph.readDirectedGraph(new Scanner(System.in));
 		Graph.Timer t = new Graph.Timer();
 		long result;
 		if(VERBOSE > 0) {
