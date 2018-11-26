@@ -18,10 +18,10 @@ public class Enumerate<T> {
     //-----------------Constructors-------------------
 
     public Enumerate(T[] arr, int k, Approver<T> app) {
-	this.arr = arr;
-	this.k = k;
-	this.count = 0;
-	this.app = app;
+        this.arr = arr;
+        this.k = k;
+        this.count = 0;
+        this.app = app;
     }
 
     public Enumerate(T[] arr, Approver<T> app) {

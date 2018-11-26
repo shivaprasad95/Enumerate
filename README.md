@@ -32,8 +32,12 @@
 - Compiler: jdk1.8.0_171
 
 ## **Instructions to compile and run the project from command line**:
-- Naviagate to "sxb180066" and open command prompt at this location
+- Navigate to "sxb180066" and open command prompt at this location
 - Compile the source file 
+   - "javac -cp . sxb180066\DFS.java"
    - "javac -cp . sxb180066\Enumerate.java"
+   - "javac -cp . sxb180066\EnumerateTopological.java"
+   - "javac -cp . sxb180066\PERT.java"
 - Run the program using following command
    - "java sxb180066.Enumerate"
+   - "java sxb180066.EnumerateTopological"
