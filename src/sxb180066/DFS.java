@@ -1,6 +1,10 @@
-/** Project: Implementation of topological sorting of a directed acyclic graph
- *  @author shiva prasad reddy bitla sxb180066
+/**
+ * Project: Implementation of topological sorting of a directed acyclic graph
+ * @author Shiva Prasad Reddy Bitla (sxb180066)
+ * @author Sudeep Maity (sdm170530)
+ * @author Saurav Sharma (sxs179830)
  */
+
 package sxb180066;
 
 import rbk.Graph;
