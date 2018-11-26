@@ -99,7 +99,7 @@ public class Graph implements Iterable<Graph.Vertex> {
      * Nested class that represents an edge of a Graph
      */
 
-    public class Edge {
+    public class Edge implements Comparable<Edge> {
         Vertex from; // head vertex
         Vertex to;   // tail vertex
         int weight;  // weight of edge
@@ -185,6 +185,11 @@ public class Graph implements Iterable<Graph.Vertex> {
             return this.name == otherEdge.name && this.from.equals(otherEdge.from) && this.to.equals(otherEdge.to);
         }
 
+        public int compareTo(Edge other) {
+            if(other == null || this.weight > other.weight) return 1;
+            else if(this.weight < other.weight) return -1;
+            else return 0;
+        }
 
         /**
          /**
@@ -306,6 +311,32 @@ public class Graph implements Iterable<Graph.Vertex> {
      */
     public Iterable<Edge> inEdges(Vertex u) { return adj(u).inEdges; }
 
+    // Return an array containing the vertices of the graph
+    public Vertex[] getVertexArray() {
+        Vertex[] arr = new Vertex[size()];
+        for(Vertex u: this) {
+            arr[u.getIndex()] = u;
+        }
+        return arr;
+    }
+
+    // Return an array containing the edges of the graph
+    public Edge[] getEdgeArray() {
+        Edge[] edgeArray;
+        edgeArray = new Edge[edgeSize()];
+        int index = 0;
+        for(Vertex u: this) {
+            for(Edge e: this.incident(u)) {
+                Vertex v = e.otherEnd(u);
+                if(isDirected() || u.getName() < v.getName()) {
+                    edgeArray[index++] = e;
+                }
+            }
+        }
+        assert(index == edgeSize());
+        return edgeArray;
+    }
+
     /** Iterator class for the vertices of a graph
      */
     private class GraphIterator implements Iterator<Vertex> {
@@ -316,7 +347,7 @@ public class Graph implements Iterable<Graph.Vertex> {
         }
         public boolean hasNext() { return it.hasNext(); }
         public Vertex next() { cur = it.next();  return cur.vertex; }
-        public void remove() { throw new UnsupportedOperationException(); }
+        public void remove() { throw new java.lang.UnsupportedOperationException(); }
     }
 
     /** Method to print a graph
@@ -497,7 +528,7 @@ public class Graph implements Iterable<Graph.Vertex> {
         }
 
         public void remove() {
-            throw new UnsupportedOperationException();
+            throw new java.lang.UnsupportedOperationException();
         }
     }
 
